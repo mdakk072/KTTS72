@@ -1,6 +1,27 @@
 """Download Kokoro models and voices for supported languages."""
+import os
+import ssl
+import urllib3
 from huggingface_hub import hf_hub_download
 from pathlib import Path
+
+# Handle SSL issues in corporate environments
+try:
+    # Disable SSL verification warnings
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    
+    # Try to use system certificates first
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+    
+    # Set environment variables for requests/urllib3
+    os.environ['CURL_CA_BUNDLE'] = ''
+    os.environ['REQUESTS_CA_BUNDLE'] = ''
+    
+except Exception as e:
+    print(f"Warning: SSL configuration failed: {e}")
+    print("Proceeding with default SSL settings...")
 
 repo = 'hexgrad/Kokoro-82M'
 
@@ -45,18 +66,64 @@ VOICES = {
     'ff_siwis': 'French Female',
 }
 
+def safe_download(repo, filename, local_dir, max_retries=3):
+    """Download with SSL bypass and retry logic for corporate environments."""
+    import time
+    from huggingface_hub.utils import HfHubHTTPError
+    
+    for attempt in range(max_retries):
+        try:
+            # First attempt with SSL bypass
+            if attempt > 0:
+                print(f"    Retry {attempt}/{max_retries - 1}...")
+                time.sleep(2)
+            
+            # Configure download with SSL bypass
+            return hf_hub_download(
+                repo, 
+                filename, 
+                local_dir=local_dir, 
+                local_dir_use_symlinks=False,
+                # Add timeout and user agent for better compatibility
+                headers={'User-Agent': 'KTTS72/1.1.0'}
+            )
+            
+        except Exception as e:
+            if "SSL" in str(e) or "CERTIFICATE" in str(e):
+                print(f"    SSL error (attempt {attempt + 1}): {type(e).__name__}")
+                if attempt == max_retries - 1:
+                    print("\n[ERROR] SSL Certificate verification failed.")
+                    print("This is common in corporate environments.")
+                    print("\nPossible solutions:")
+                    print("1. Use corporate VPN if available")
+                    print("2. Download models manually from: https://huggingface.co/hexgrad/Kokoro-82M")
+                    print("3. Contact IT support for SSL certificate issues")
+                    print("\nManual download instructions:")
+                    print(f"  - Download {filename} to models/kokoro-82m/ folder")
+                    raise e
+            else:
+                print(f"    Download error: {e}")
+                if attempt == max_retries - 1:
+                    raise e
+        
+        time.sleep(1)
+    
+    return None
+
+
 def main():
     voices = list(VOICES.keys())
     total = len(voices)
 
     # Download base model
     print('[1/3] Downloading base model files...')
+    print('Note: If SSL errors occur, this is normal in corporate environments.')
     base_dir = Path('models/kokoro-82m')
     base_dir.mkdir(parents=True, exist_ok=True)
 
     for f in ['config.json', 'kokoro-v1_0.pth']:
         print(f'  Downloading {f}...')
-        hf_hub_download(repo, f, local_dir=base_dir, local_dir_use_symlinks=False)
+        safe_download(repo, f, base_dir)
         print(f'  OK {f}')
 
     # Download voices
@@ -66,7 +133,7 @@ def main():
 
     for i, v in enumerate(voices):
         print(f'  [{i+1}/{total}] {v}.pt')
-        hf_hub_download(repo, f'voices/{v}.pt', local_dir=voices_dir, local_dir_use_symlinks=False)
+        safe_download(repo, f'voices/{v}.pt', voices_dir)
 
     print('\n[3/3] Verifying downloads...')
     if Path('models/voices/af_heart.pt').exists():

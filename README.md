@@ -200,7 +200,34 @@ kokoro_lib/
 ## Troubleshooting
 
 ### "Models not found"
-Run `setup_env.bat` to download the required models (~1.5 GB).
+Run `setup_env.bat` to download the required models (~1.2 GB).
+
+### SSL Certificate Verification Failed (Corporate Networks)
+**Error**: `certificate verify failed: unable to get local issuer certificate`
+
+This is common in corporate environments with proxy servers or custom certificates.
+
+**Quick Fix**:
+```cmd
+python fix_ssl.py
+```
+
+**Alternative Solutions**:
+1. Use corporate VPN if available
+2. Manual download:
+   - Go to https://huggingface.co/hexgrad/Kokoro-82M
+   - Download files to `models/` folder as shown in structure below
+3. Contact IT support for SSL certificate issues
+
+**Expected folder structure**:
+```
+models/
+├── kokoro-82m/
+│   ├── config.json
+│   └── kokoro-v1_0.pth  
+└── voices/
+    └── (32 voice files)
+```
 
 ### Slow first run
 The first synthesis takes longer due to model loading. Subsequent runs are faster.

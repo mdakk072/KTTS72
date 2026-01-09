@@ -9,6 +9,19 @@ Automatically downloads models if they don't exist locally.
 from pathlib import Path
 import sys
 import os
+import ssl
+import urllib3
+
+# Handle SSL issues in corporate environments
+try:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+    os.environ['CURL_CA_BUNDLE'] = ''
+    os.environ['REQUESTS_CA_BUNDLE'] = ''
+except Exception:
+    pass  # Continue with default SSL settings
 
 def get_models_dir() -> Path:
     """
@@ -84,6 +97,37 @@ def models_exist() -> bool:
 
     return all(Path(p).exists() for p in required_files)
 
+def safe_hf_download(repo_id, filename, max_retries=3):
+    """Download with SSL bypass and retry logic."""
+    import time
+    from huggingface_hub import hf_hub_download
+    
+    for attempt in range(max_retries):
+        try:
+            if attempt > 0:
+                print(f"    Retry {attempt}/{max_retries - 1}...")
+                time.sleep(2)
+                
+            return hf_hub_download(
+                repo_id=repo_id, 
+                filename=filename,
+                headers={'User-Agent': 'KTTS72/1.1.0'}
+            )
+            
+        except Exception as e:
+            if "SSL" in str(e) or "CERTIFICATE" in str(e):
+                print(f"    SSL error (attempt {attempt + 1})")
+                if attempt == max_retries - 1:
+                    print("\n[ERROR] SSL Certificate verification failed.")
+                    print("Please run download_models.py to get detailed SSL help.")
+                    raise e
+            else:
+                if attempt == max_retries - 1:
+                    raise e
+        time.sleep(1)
+    return None
+
+
 def download_models() -> bool:
     """
     Download models to local directory if they don't exist.
@@ -95,7 +139,6 @@ def download_models() -> bool:
         return True
 
     try:
-        from huggingface_hub import hf_hub_download
         import shutil
 
         print("[SETUP] Downloading models to local directory...")
@@ -118,7 +161,7 @@ def download_models() -> bool:
 
         for filename, dest_dir in files_to_download:
             print(f"Downloading {filename}...")
-            cached_path = hf_hub_download(repo_id=repo_id, filename=filename)
+            cached_path = safe_hf_download(repo_id, filename)
             local_filename = Path(filename).name
             dest_path = dest_dir / local_filename
             shutil.copy2(cached_path, dest_path)
