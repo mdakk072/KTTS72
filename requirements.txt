@@ -1,0 +1,9 @@
+kokoro>=0.9.4
+soundfile
+numpy
+huggingface-hub[hf_xet]>=0.20.0
+spacy>=3.8.0
+# Pin to wheels that exist for Python 3.10 on Windows (avoids building tokenizers from source / Rust)
+transformers==4.38.2
+tokenizers==0.15.2
+# Note: en_core_web_sm removed - we mock spaCy in app.py, don't need the model
