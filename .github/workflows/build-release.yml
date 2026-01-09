@@ -1,0 +1,109 @@
+name: Build and Release KTTS72
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Create virtual environment
+      run: |
+        python -m venv venv
+        venv\Scripts\activate
+        python -m pip install --upgrade pip
+        
+    - name: Install dependencies
+      run: |
+        venv\Scripts\activate
+        pip install -r requirements.txt
+        
+    - name: Download models
+      run: |
+        venv\Scripts\activate
+        python download_models.py
+        
+    - name: Build executable
+      run: |
+        venv\Scripts\activate
+        python -m PyInstaller app.spec
+        
+    - name: Test executable
+      run: |
+        dist\KTTS72.exe --text "CI/CD test successful" --out test_output.wav
+        
+    - name: Create release archive
+      run: |
+        Compress-Archive -Path "dist\KTTS72\*" -DestinationPath "KTTS72-windows-x64.zip"
+        
+    - name: Get version
+      id: version
+      run: |
+        $version = python -c "from kokoro_announce import __version__; print(__version__)"
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        
+    - name: Create Release
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        release_name: KTTS72 v${{ steps.version.outputs.VERSION }}
+        body: |
+          ## KTTS72 v${{ steps.version.outputs.VERSION }}
+          
+          High-quality offline text-to-speech application powered by Kokoro-82M neural TTS model.
+          
+          ### Features
+          - 32 pre-trained voices across 4 languages (English, Spanish, French)
+          - Fully offline operation
+          - Multiple output formats (WAV, MP3)
+          - Standalone Windows executable
+          
+          ### Download
+          Download the ZIP file below, extract it, and run `KTTS72.exe`.
+          
+          ### Usage
+          ```
+          KTTS72.exe --text "Hello world" --out hello.wav
+          KTTS72.exe --list-voices
+          KTTS72.exe --help
+          ```
+          
+          ### System Requirements
+          - Windows 10/11 (x64)
+          - ~1.5GB disk space
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./KTTS72-windows-x64.zip
+        asset_name: KTTS72-windows-x64.zip
+        asset_content_type: application/zip
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: KTTS72-build-${{ github.sha }}
+        path: KTTS72-windows-x64.zip
+        retention-days: 30

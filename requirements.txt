@@ -1,9 +1,22 @@
-kokoro>=0.9.4
-soundfile
-numpy
-huggingface-hub[hf_xet]>=0.20.0
-spacy>=3.8.0
-# Pin to wheels that exist for Python 3.10 on Windows (avoids building tokenizers from source / Rust)
-transformers==4.38.2
-tokenizers==0.15.2
-# Note: en_core_web_sm removed - we mock spaCy in app.py, don't need the model
+# KTTS72 Dependencies
+# Pin exact versions for reproducible builds
+
+# Core TTS engine
+kokoro==0.9.4
+
+# Audio I/O
+soundfile==0.13.1
+numpy==2.2.6
+
+# Model downloading
+huggingface-hub[hf_xet]==0.27.1
+
+# NLP (for phonemization)
+spacy==3.8.4
+
+# Transformers (pinned for Windows wheel compatibility)
+transformers==4.47.1
+tokenizers==0.21.0
+
+# PyInstaller for building exe
+pyinstaller==6.11.1
