@@ -1,4 +1,4 @@
-# Kokoro72CLI Dependencies
+# KTTS72 Dependencies
 # Pin exact versions for reproducible builds
 
 # Core TTS engine

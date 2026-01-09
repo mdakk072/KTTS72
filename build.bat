@@ -66,7 +66,7 @@ echo ============================================================
 echo Testing Build
 echo ============================================================
 echo.
-dist\Kokoro72CLI\Kokoro72CLI.exe --text "Build test successful" --out dist_test.wav
+dist\KTTS72\KTTS72.exe --text "Build test successful" --out dist_test.wav
 if errorlevel 1 (
     echo [ERROR] Build test failed
     exit /b 1
@@ -78,17 +78,17 @@ echo ============================================================
 echo [SUCCESS] Build Complete!
 echo ============================================================
 echo.
-echo Build location: dist\Kokoro72CLI\
-echo Executable: dist\Kokoro72CLI\Kokoro72CLI.exe
+echo Build location: dist\KTTS72\
+echo Executable: dist\KTTS72\KTTS72.exe
 echo.
 
 REM Calculate size
-for /f %%A in ('powershell -Command "(Get-ChildItem -Path dist\Kokoro72CLI -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB"') do set SIZE=%%A
+for /f %%A in ('powershell -Command "(Get-ChildItem -Path dist\KTTS72 -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB"') do set SIZE=%%A
 echo Build size: %SIZE% MB
 echo.
 
 echo Test it:
-echo   dist\Kokoro72CLI\Kokoro72CLI.exe --text "Hello" --out hello.wav
+echo   dist\KTTS72\KTTS72.exe --text "Hello" --out hello.wav
 echo.
 
 endlocal

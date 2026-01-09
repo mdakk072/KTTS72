@@ -58,7 +58,7 @@ def create_parser() -> argparse.ArgumentParser:
         Configured ArgumentParser
     """
     parser = argparse.ArgumentParser(
-        prog="Kokoro72CLI",
+        prog="KTTS72",
         description="Kokoro TTS - High-quality offline text-to-speech synthesis",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""

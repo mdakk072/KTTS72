@@ -1,4 +1,4 @@
-# Kokoro72CLI
+# KTTS72
 
 ![Windows](https://img.shields.io/badge/Windows-0078D4?style=flat&logo=microsoft&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
@@ -36,8 +36,8 @@ Requirements:
 
 ```batch
 :: Clone the repository
-git clone https://github.com/your-username/kokoro72cli.git
-cd kokoro72cli
+git clone https://github.com/your-username/ktts72.git
+cd ktts72
 
 :: Run setup (creates venv, installs deps, downloads models)
 setup_env.bat
@@ -46,7 +46,7 @@ setup_env.bat
 build.bat
 ```
 
-The executable will be in `dist\Kokoro72CLI.exe` (one-file) or `dist\Kokoro72CLI\` (one-directory).
+The executable will be in `dist\KTTS72.exe` (one-file) or `dist\KTTS72\` (one-directory).
 
 ## Usage
 
@@ -54,35 +54,35 @@ The executable will be in `dist\Kokoro72CLI.exe` (one-file) or `dist\Kokoro72CLI
 
 ```batch
 :: Simple text-to-speech
-Kokoro72CLI.exe --text "Hello world" --out hello.wav
+KTTS72.exe --text "Hello world" --out hello.wav
 
 :: Read from file
-Kokoro72CLI.exe --text-file script.txt --out speech.wav
+KTTS72.exe --text-file script.txt --out speech.wav
 
 :: Change voice
-Kokoro72CLI.exe --text "Hello" --voice am_adam --out hello.wav
+KTTS72.exe --text "Hello" --voice am_adam --out hello.wav
 
 :: Adjust speed (0.25 to 4.0)
-Kokoro72CLI.exe --text "Fast speech" --speed 1.5 --out fast.wav
+KTTS72.exe --text "Fast speech" --speed 1.5 --out fast.wav
 
 :: Output as MP3 (requires ffmpeg in PATH)
-Kokoro72CLI.exe --text "Hello" --out hello.mp3
+KTTS72.exe --text "Hello" --out hello.mp3
 
 :: French voice
-Kokoro72CLI.exe --text "Bonjour le monde" --lang f --voice ff_siwis --out french.wav
+KTTS72.exe --text "Bonjour le monde" --lang f --voice ff_siwis --out french.wav
 ```
 
 ### List Available Options
 
 ```batch
 :: List all voices
-Kokoro72CLI.exe --list-voices
+KTTS72.exe --list-voices
 
 :: List all languages
-Kokoro72CLI.exe --list-languages
+KTTS72.exe --list-languages
 
 :: Show help
-Kokoro72CLI.exe --help
+KTTS72.exe --help
 ```
 
 ### All Options
@@ -135,7 +135,7 @@ The standalone executable is approximately **1.5 GB** due to:
 
 ## Python API
 
-You can also use Kokoro72CLI as a Python library:
+You can also use KTTS72 as a Python library:
 
 ```python
 from kokoro_announce import KokoroAnnouncer, KokoroSettings

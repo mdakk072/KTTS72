@@ -1,4 +1,4 @@
-# Kokoro72CLI - Full dependency lock file
+# KTTS72 - Full dependency lock file
 # Generated from working Windows build environment
 # Use: pip install -r requirements-lock.txt
 
