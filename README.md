@@ -1,6 +1,12 @@
 # Kokoro72CLI
 
-High-quality offline text-to-speech powered by the [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) neural TTS model.
+![Windows](https://img.shields.io/badge/Windows-0078D4?style=flat&logo=microsoft&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat)
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat)
+
+High-quality offline text-to-speech application powered by the [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) neural TTS model. Convert text to natural-sounding speech in 32 voices across English, Spanish, and French - completely offline after setup.
 
 ## Features
 
@@ -21,18 +27,12 @@ High-quality offline text-to-speech powered by the [Kokoro-82M](https://huggingf
 
 ## Installation
 
-### Option 1: Download Pre-built Executable (Recommended)
-
-1. Download the latest release from the [Releases](../../releases) page
-2. Extract the ZIP file
-3. Run `Kokoro72CLI.exe` from the extracted folder
-
-### Option 2: Build from Source
+### Build from Source
 
 Requirements:
 - Windows 10/11
 - Python 3.10+
-- ~2GB disk space for models
+- ~1.2GB disk space for models
 
 ```batch
 :: Clone the repository
@@ -46,7 +46,7 @@ setup_env.bat
 build.bat
 ```
 
-The executable will be in `dist\Kokoro72CLI\Kokoro72CLI.exe`
+The executable will be in `dist\Kokoro72CLI.exe` (one-file) or `dist\Kokoro72CLI\` (one-directory).
 
 ## Usage
 
@@ -113,8 +113,8 @@ Kokoro72CLI.exe --help
 - Male: `bm_daniel`, `bm_george`, `bm_fable`, `bm_lewis`
 
 ### Other Languages
-- Spanish: `ef_dora`, `em_alex`, `em_santa`
 - French: `ff_siwis`
+- Spanish: `ef_dora`, `em_alex`, `em_santa`
 
 ## MP3 Support
 
@@ -157,6 +157,22 @@ announcer.synthesize_to_file("Hello world", "output.wav")
 # Or get raw audio
 audio = announcer.synthesize("Hello world")  # numpy array
 ```
+
+## Example Script
+
+See [example.py](example.py) for a complete demonstration of using the library to generate multiple audio files:
+
+```python
+# Generate 4 different voices with custom parameters
+synthesis_tasks = [
+    {"text": "Hello, this is American English.", "voice": "af_heart", "lang": "a", "speed": 1.0, "sample_rate": 24000, "filename": "english_american.wav"},
+    {"text": "Good afternoon from Britain.", "voice": "bm_lewis", "lang": "b", "speed": 0.9, "sample_rate": 22050, "filename": "english_british.wav"},
+    {"text": "Hola, esto es español.", "voice": "ef_dora", "lang": "e", "speed": 1.1, "sample_rate": 24000, "filename": "spanish_test.wav"},
+    {"text": "Bonjour, ceci est français.", "voice": "ff_siwis", "lang": "f", "speed": 1.0, "sample_rate": 48000, "filename": "french_test.wav"}
+]
+```
+
+Run `python example.py` to generate sample audio files in multiple languages.
 
 ## Project Structure
 
