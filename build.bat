@@ -1,4 +1,6 @@
 @echo off
+setlocal EnableExtensions
+
 REM Build script for Windows
 REM Creates standalone executable with PyInstaller
 
@@ -7,30 +9,37 @@ echo Building Kokoro Announce (Windows)
 echo ============================================================
 echo.
 
-REM Check if venv is activated
-where python > nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Python not found. Please run setup_env.bat first
+REM Check if venv exists
+if not exist "venv\Scripts\activate.bat" (
+    echo [ERROR] Virtual environment not found.
+    echo Please run setup_env.bat first.
     exit /b 1
 )
 
-REM Check if in venv
-python -c "import sys; sys.exit(0 if hasattr(sys, 'prefix') and sys.prefix != sys.base_prefix else 1)" > nul 2>&1
+REM Activate virtual environment
+echo [SETUP] Activating virtual environment...
+call venv\Scripts\activate.bat
+
+REM Verify Python works
+python --version >nul 2>&1
 if errorlevel 1 (
-    echo [SETUP] Activating virtual environment...
-    call venv\Scripts\activate.bat
+    echo [ERROR] Python not working in venv.
+    echo Please run setup_env.bat again.
+    exit /b 1
 )
 
 REM Check if PyInstaller is installed
-python -c "import PyInstaller" > nul 2>&1
+python -c "import PyInstaller" >nul 2>&1
 if errorlevel 1 (
-    echo [ERROR] PyInstaller not installed. Please run setup_env.bat first
+    echo [ERROR] PyInstaller not installed.
+    echo Please run setup_env.bat first.
     exit /b 1
 )
 
 REM Check if models exist
 if not exist "models\kokoro-82m\kokoro-v1_0.pth" (
-    echo [ERROR] Models not found. Please run setup_env.bat first
+    echo [ERROR] Models not found.
+    echo Please run setup_env.bat first.
     exit /b 1
 )
 
@@ -45,7 +54,7 @@ echo.
 echo [BUILD] Running PyInstaller...
 echo This may take several minutes...
 echo.
-pyinstaller app.spec
+python -m PyInstaller app.spec
 if errorlevel 1 (
     echo [ERROR] Build failed
     exit /b 1
@@ -81,3 +90,5 @@ echo.
 echo Test it:
 echo   dist\Kokoro72CLI\Kokoro72CLI.exe --text "Hello" --out hello.wav
 echo.
+
+endlocal
