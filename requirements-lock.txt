@@ -1,0 +1,73 @@
+# Kokoro72CLI - Full dependency lock file
+# Generated from working Windows build environment
+# Use: pip install -r requirements-lock.txt
+
+# Core TTS
+kokoro==0.9.4
+misaki==0.9.4
+phonemizer-fork==3.3.2
+espeakng-loader==0.2.4
+
+# PyTorch (CPU version for smaller builds)
+torch==2.9.1
+
+# Transformers & NLP
+transformers==4.38.2
+tokenizers==0.15.2
+spacy==3.8.11
+spacy-legacy==3.0.12
+spacy-loggers==1.0.5
+thinc==8.3.10
+
+# Audio
+soundfile==0.13.1
+numpy==2.2.6
+
+# HuggingFace
+huggingface-hub==0.36.0
+hf-xet==1.2.0
+safetensors==0.7.0
+
+# Build tools
+pyinstaller==6.17.0
+pyinstaller-hooks-contrib==2025.10
+
+# Common dependencies
+certifi==2025.11.12
+charset-normalizer==3.4.4
+click==8.3.1
+colorama==0.4.6
+filelock==3.20.0
+fsspec==2025.12.0
+idna==3.11
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+networkx==3.4.2
+packaging==25.0
+pillow==12.0.0
+pydantic==2.12.5
+pydantic_core==2.41.5
+PyYAML==6.0.3
+regex==2025.11.3
+requests==2.32.5
+sympy==1.14.0
+tqdm==4.67.1
+typing_extensions==4.15.0
+urllib3==2.6.2
+
+# spaCy dependencies
+blis==1.3.3
+catalogue==2.0.10
+confection==0.1.5
+cymem==2.0.13
+murmurhash==1.0.15
+preshed==3.0.12
+srsly==2.5.2
+wasabi==1.1.3
+weasel==0.4.3
+
+# Windows-specific
+altgraph==0.17.5
+pefile==2024.8.26
+pywin32-ctypes==0.2.3
+win32_setctime==1.2.0
