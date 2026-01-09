@@ -40,4 +40,4 @@ __all__ = [
     "apply_all_patches",
 ]
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
