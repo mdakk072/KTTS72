@@ -42,7 +42,7 @@ jobs:
         
     - name: Test executable
       run: |
-        dist\KTTS72.exe --text "CI/CD test successful" --out test_output.wav
+        & ".\dist\KTTS72.exe" --text "CI/CD test successful" --out test_output.wav
         
     - name: Create release archive
       run: |
